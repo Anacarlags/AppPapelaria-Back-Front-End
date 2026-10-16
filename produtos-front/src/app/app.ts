@@ -1,5 +1,4 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Produto } from './models/produto.model';
 import { ProdutosService } from './services/produtos';
@@ -7,85 +6,140 @@ import { ProdutosService } from './services/produtos';
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [ FormsModule],
   templateUrl: './app.html',
   styleUrls: ['./app.css']
 })
 export class App implements OnInit {
-  // Lista que vai guardar todos os produtos carregados da API
-  produtos: Produto[] = [];
+  produtos = signal<Produto[]>([]);
+  carregando = signal(false);
+  erro = signal('');
 
-  // Objeto para controlar o formulário de criação/edição
-  produtoForm = { id: 0, nome: '', preco: 0 };
+  novoNome = '';
+  novoPreco: number | null = null;
+  salvando = signal(false);
+  editandoId: number | null = null;
 
-  // Variáveis para a funcionalidade de busca por ID
   idBusca: number | null = null;
-  produtoEncontrado: Produto | null = null;
+  produtoBuscado = signal<Produto | null>(null);
+  buscandoId = signal(false);
+  erroBusca = signal('');
 
-  constructor(private produtosService: ProdutosService) {}
+  constructor(private readonly produtosService: ProdutosService) {}
 
   ngOnInit(): void {
-    // Carrega a lista de produtos assim que o componente é iniciado
     this.carregarProdutos();
   }
 
   carregarProdutos(): void {
+    this.carregando.set(true);
+    this.erro.set('');
+
     this.produtosService.listarTodos().subscribe({
-      next: (dados) => this.produtos = dados,
-      error: (erro) => console.error('Erro ao carregar produtos', erro)
+      next: (produtos) => {
+        this.produtos.set(produtos);
+        this.carregando.set(false);
+      },
+      error: () => {
+        this.erro.set('Não foi possível carregar os produtos. Verifique se a API está em execução');
+        this.carregando.set(false);
+      },
     });
   }
 
-  buscarProduto(): void {
-    if (this.idBusca) {
-      this.produtosService.buscarPorId(this.idBusca).subscribe({
-        next: (dados) => this.produtoEncontrado = dados,
-        error: (erro) => {
-          console.error('Produto não encontrado', erro);
-          this.produtoEncontrado = null;
-          alert('Produto não encontrado!');
-        }
-      });
+  salvarProduto(): void {
+    if (!this.novoNome.trim() || this.novoPreco === null || this.novoPreco <= 0) {
+      this.erro.set('Informe um nome válido e um preço maior que zero.');
+      return;
     }
-  }
 
-  adicionarOuAtualizar(): void {
-    if (this.produtoForm.id === 0) {
-      // Se o ID for 0, é um produto novo (POST)
-      const novoProduto = { nome: this.produtoForm.nome, preco: this.produtoForm.preco };
-      this.produtosService.criar(novoProduto).subscribe({
+    this.erro.set('');
+    this.salvando.set(true);
+
+const produto = { id: 0, nome: this.novoNome.trim(), preco: this.novoPreco };
+    if (this.editandoId !== null) {
+      this.produtosService.atualizar(this.editandoId, produto).subscribe({
         next: () => {
-          this.carregarProdutos(); // Recarrega a tabela
-          this.limparFormulario(); // Limpa os campos
+          this.cancelarEdicao();
+          this.salvando.set(false);
+          setTimeout(() => this.carregarProdutos(), 200);
         },
-        error: (erro) => console.error('Erro ao criar', erro)
-      });
-    } else {
-      // Se já tem ID, estamos a editar um produto existente (PUT)
-      const produtoAtualizado = { nome: this.produtoForm.nome, preco: this.produtoForm.preco };
-      this.produtosService.atualizar(this.produtoForm.id, produtoAtualizado).subscribe({
-        next: () => {
-          this.carregarProdutos();
-          this.limparFormulario();
+        error: () => {
+          this.erro.set('Não foi possível atualizar o produto. Verifique se a API está em execução.');
+          this.salvando.set(false);
         },
-        error: (erro) => console.error('Erro ao atualizar', erro)
       });
+      return;
     }
+
+    this.produtosService.criar(produto).subscribe({
+        next: () => {
+          this.novoNome = '';
+          this.novoPreco = null;
+          this.salvando.set(false);
+          setTimeout(() => this.carregarProdutos(), 200); 
+        },
+      error: () => {
+        this.erro.set('Não foi possível criar o produto. Verifique se a API está em execução.');
+        this.salvando.set(false);
+      },
+    });
   }
 
-  editar(produto: Produto): void {
-    // Copia os dados do produto clicado na tabela para o formulário
-    this.produtoForm = { ...produto };
+  editarProduto(produto: Produto): void {
+    this.editandoId = produto.id;
+    this.novoNome = produto.nome;
+    this.novoPreco = produto.preco;
+    this.erro.set('');
   }
 
-  remover(id: number): void {
+  cancelarEdicao(): void {
+    this.editandoId = null;
+    this.novoNome = '';
+    this.novoPreco = null;
+  }
+
+  removerProduto(id: number): void {
+    this.erro.set('');
+
     this.produtosService.remover(id).subscribe({
-      next: () => this.carregarProdutos(),
-      error: (erro) => console.error('Erro ao remover', erro)
+      next: () => {
+        this.produtos.update((lista) => lista.filter((p) => p.id !== id));
+        if (this.editandoId === id) {
+          this.cancelarEdicao();
+        }
+      },
+      error: () => {
+        this.erro.set('Não foi possível remover o produto. Verifique se a API está em execução.');
+      },
     });
   }
 
-  limparFormulario(): void {
-    this.produtoForm = { id: 0, nome: '', preco: 0 };
+  buscarProdutoPorId(): void {
+    if (this.idBusca === null) {
+      this.erroBusca.set('Informe um id para buscar.');
+      return;
+    }
+
+    this.erroBusca.set('');
+    this.produtoBuscado.set(null);
+    this.buscandoId.set(true);
+
+    this.produtosService.buscarPorId(this.idBusca).subscribe({
+      next: (produto) => {
+        this.produtoBuscado.set(produto);
+        this.buscandoId.set(false);
+      },
+      error: () => {
+        this.erroBusca.set('Produto não encontrado.');
+        this.buscandoId.set(false);
+      },
+    });
+  }
+
+  limparBusca(): void {
+    this.idBusca = null;
+    this.produtoBuscado.set(null);
+    this.erroBusca.set('');
   }
 }

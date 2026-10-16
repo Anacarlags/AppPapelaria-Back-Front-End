@@ -1,0 +1,130 @@
+.container {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 0 20px;
+  color: #333;
+}
+
+h1 {
+  margin-bottom: 5px;
+  color: #2c3e50;
+}
+
+.subtitulo {
+  color: #7f8c8d;
+  margin-top: 0;
+  margin-bottom: 30px;
+}
+
+.card {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  padding: 25px;
+  margin-bottom: 25px;
+  border: 1px solid #e1e8ed;
+}
+
+.card h2 {
+  margin-top: 0;
+  font-size: 1.2rem;
+  color: #34495e;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+}
+
+.formulario {
+  display: flex;
+  gap: 15px;
+  align-items: flex-end;
+  flex-wrap: wrap;
+}
+
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.campo label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #555;
+}
+
+input {
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+  transition: border-color 0.2s;
+}
+
+input:focus {
+  border-color: #3498db;
+  outline: none;
+}
+
+button {
+  padding: 10px 20px;
+  background-color: #3498db;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+button:hover { background-color: #2980b9; }
+
+.botao-secundario {
+  background-color: #95a5a6;
+}
+.botao-secundario:hover { background-color: #7f8c8d; }
+
+.botao-editar {
+  background-color: #f39c12;
+  padding: 6px 12px;
+  font-size: 0.85rem;
+}
+.botao-editar:hover { background-color: #d68910; }
+
+.botao-remover {
+  background-color: #e74c3c;
+  padding: 6px 12px;
+  font-size: 0.85rem;
+}
+.botao-remover:hover { background-color: #c0392b; }
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 15px;
+}
+
+th, td {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+}
+
+th {
+  background-color: #f9f9f9;
+  color: #333;
+}
+
+.acoes {
+  display: flex;
+  gap: 8px;
+}
+
+.vazio {
+  text-align: center;
+  color: #7f8c8d;
+  font-style: italic;
+  padding: 20px;
+}
