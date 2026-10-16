@@ -5,7 +5,7 @@ Este repositório contém uma aplicação full-stack de gestão de produtos, des
 ## 🚀 Tecnologias Utilizadas
 
 ### Front-End
-* **Angular 18+:** Utilizando as funcionalidades mais modernas do framework, incluindo *Standalone Components*, *Signals* para gestão de estado reativa e a nova sintaxe de *Control Flow* (`@if`, `@for`).
+* **Angular 22**
 * **TypeScript, HTML5 & CSS3.**
 
 ### Back-End
