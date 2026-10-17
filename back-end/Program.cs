@@ -1,6 +1,7 @@
 using minhaPrimeiraApi.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using minhaPrimeiraApi.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
