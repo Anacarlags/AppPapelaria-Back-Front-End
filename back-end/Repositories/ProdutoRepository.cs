@@ -14,9 +14,9 @@ public class ProdutoRepository : IProdutoRepository
         _context = context;
     }
 
-    public async Task<List<Produto>> ListarTodosAsync(int id)
+    public async Task<List<Produto>> ListarTodosAsync()
     {
-        return await _context.Produtos.Where(p => p.Id == id).ToListAsync();
+        return await _context.Produtos.ToListAsync();
     }
 
     public async Task<Produto> ListarPorIdAsync(int id)
