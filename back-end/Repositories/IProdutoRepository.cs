@@ -12,5 +12,7 @@ using minhaPrimeiraApi.Models;
         Task<Produto> CriarAsync(Produto produto);
         Task<Produto> AtualizarAsync(int id, Produto produtoAtualizado);
         Task<bool> DeletarAsync(int id);
+
+        Task<bool> ExisteNomeDuploAsync(string nome, int id);
         
     }

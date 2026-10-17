@@ -58,4 +58,11 @@ public class ProdutoRepository : IProdutoRepository
         await _context.SaveChangesAsync();
         return true;
     }
+
+    public async Task<bool> ExisteNomeDuploAsync(string nome, int id)
+    {
+        return await _context.Produtos.AnyAsync(p => p.Nome == nome && p.Id != id);
+    }
+
+
 }
