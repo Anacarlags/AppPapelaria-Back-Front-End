@@ -12,9 +12,9 @@ public class ProdutoService : IProdutoService
         _produtoRepository = produtoRepository;
     }
 
-    public async Task<List<Produto>> ListarTodosAsync(int id)
+    public async Task<List<Produto>> ListarTodosAsync()
     {
-        return await _produtoRepository.ListarTodosAsync(id);
+        return await _produtoRepository.ListarTodosAsync();
     }
 
     public async Task<Produto> ListarPorIdAsync(int id)
@@ -24,12 +24,11 @@ public class ProdutoService : IProdutoService
 
     public async Task<Produto> CriarAsync(Produto produto)
     {
-        if(produto.Preco <= 0.1m)
+        if (produto.Preco <= 0.1m)
             throw new ArgumentException("O preço do produto deve ser maior que zero.");
-        if(await _produtoRepository.ExisteNomeDuploAsync(produto.Nome, produto.Id))
-            throw new ArgumentException("Já existe um produto com o mesmo nome.");
-        
-        return await _produtoRepository.CriarAsync(produto);
+        if (!await _produtoRepository.ExisteNomeDuploAsync(produto.Nome, produto.Id))
+            return await _produtoRepository.CriarAsync(produto);
+        throw new ArgumentException("Já existe um produto com o mesmo nome.");
     }
 
     public async Task<Produto> AtualizarAsync(int id, Produto produtoAtualizado)

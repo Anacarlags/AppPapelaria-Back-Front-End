@@ -14,5 +14,5 @@ using minhaPrimeiraApi.Models;
         Task<bool> DeletarAsync(int id);
 
         Task<bool> ExisteNomeDuploAsync(string nome, int id);
-        
-    }
+    Task<List<Produto>> ListarTodosAsync();
+}

@@ -5,7 +5,7 @@ using minhaPrimeiraApi.Repositories;
 
 public interface IProdutoService
 {
-        Task<List<Produto>> ListarTodosAsync(int id);
+        Task<List<Produto>> ListarTodosAsync();
         Task<Produto> ListarPorIdAsync(int id);
         Task<Produto> CriarAsync(Produto produto);
         Task<Produto> AtualizarAsync(int id, Produto produtoAtualizado);
