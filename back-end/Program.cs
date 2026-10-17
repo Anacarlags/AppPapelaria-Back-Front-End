@@ -2,6 +2,7 @@ using minhaPrimeiraApi.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using minhaPrimeiraApi.Repositories;
+using minhaPrimeiraApi.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +14,8 @@ builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlite("Data Source=minhaapi.db"));
+builder.Services.AddScoped<IProdutoRepository, ProdutoRepository>();
+builder.Services.AddScoped<IProdutoService, ProdutoService>();
 
 //Integra com o Angular
 builder.Services.AddCors(options =>
